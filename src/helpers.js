@@ -40,3 +40,5 @@ function findBestMove(squares) {
     }
   }
 }
+
+export default calculateWinner;
