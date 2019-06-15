@@ -10,10 +10,10 @@ class Global extends React.Component {
     this.state = {
       history: [{
         localSteps: Array(9).fill(0),
+        focus: null,
       }],
       globalBoard: Array(9).fill(null),
       stepNumber: 0,
-      nextBoard: null,
       xIsNext: true,
     }
   }
@@ -30,9 +30,9 @@ class Global extends React.Component {
     this.setState({
       history: history.concat([{
         localSteps: localSteps,
+        focus: localCoordinate,
       }]),
       stepNumber: history.length,
-      nextBoard: localCoordinate,
       xIsNext: !this.state.xIsNext,
     });
   }
@@ -42,7 +42,7 @@ class Global extends React.Component {
     const history = this.state.history;
     const current = history[stepNumber];
     const localSteps = current.localSteps;
-    const nextBoard = this.state.nextBoard;
+    const focus = current.focus;
 
     let parent = [];
 
@@ -55,7 +55,7 @@ class Global extends React.Component {
             key={(3*i)+j}
             onClick={(a, b) => this.handleClick(a, b, (3*i)+j)}
             step={localSteps[(3*i)+j]}
-            focus={(3*i)+j === nextBoard ? true : false}
+            focus={(3*i)+j === focus ? true : false}
             turn={this.state.xIsNext}
             start={this.state.stepNumber === 0 ? true : false}
           />
