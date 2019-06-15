@@ -10,9 +10,10 @@ class Global extends React.Component {
     this.state = {
       history: [{
         localSteps: Array(9).fill(0),
+        globalBoard: Array(9).fill(null),
         focus: null,
       }],
-      globalBoard: Array(9).fill(null),
+
       stepNumber: 0,
       xIsNext: true,
     }
@@ -22,7 +23,7 @@ class Global extends React.Component {
     const history = this.state.history.slice(0, this.state.stepNumber + 1);
     const current = history[history.length - 1];
     const localSteps = current.localSteps.slice();
-    const globalBoard = this.state.globalBoard;
+    const globalBoard = current.globalBoard.slice();
 
     localSteps[localBoard] += 1;
     globalBoard[localBoard] = localStatus;
@@ -30,6 +31,7 @@ class Global extends React.Component {
     this.setState({
       history: history.concat([{
         localSteps: localSteps,
+        globalBoard: globalBoard,
         focus: localCoordinate,
       }]),
       stepNumber: history.length,
@@ -69,11 +71,10 @@ class Global extends React.Component {
   }
 
   jumpTo(step, move) {
-    console.log("jumpTo() - Global - Step: " + step + " Move: " + move);
     if(step < move && step >= 0) {
       this.setState({
         stepNumber: step,
-        xIsNext: (step % 2) === 0,
+        xIsNext: true,
       });
     }
   }
@@ -81,7 +82,9 @@ class Global extends React.Component {
   render() {
       const history = this.state.history;
       const stepNumber = this.state.stepNumber;
-      const winInfo = helpers.calculateWinner(this.state.globalBoard);
+      const current = history[stepNumber];
+      const globalBoard = current.globalBoard;
+      const winInfo = helpers.calculateWinner(globalBoard);
 
       const moves = (
           <div className="game-history">
@@ -90,14 +93,14 @@ class Global extends React.Component {
               icon={faChevronLeft}
               pull="left"
               size="lg"
-              onClick={() => this.jumpTo(stepNumber-1, history.length)}
+              onClick={() => this.jumpTo(stepNumber-2, history.length)}
             />
             <FontAwesomeIcon
               key="right"
               icon={faChevronRight}
               pull="right"
               size="lg"
-              onClick={() => this.jumpTo(stepNumber+1, history.length)}
+              onClick={() => this.jumpTo(stepNumber+2, history.length)}
             />
           </div>
       );
