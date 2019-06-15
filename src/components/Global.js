@@ -1,6 +1,6 @@
 import React from 'react';
 import Local from './Local';
-import calculateWinner from '../helpers.js';
+import helpers from '../helpers.js';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons'
 
@@ -50,12 +50,13 @@ class Global extends React.Component {
       let children = [];
 
       for(let j = 0; j < 3; j++) {
+        let item = (3*i) + j;
         children.push(
           <Local
-            key={(3*i)+j}
-            onClick={(a, b) => this.handleClick(a, b, (3*i)+j)}
-            step={localSteps[(3*i)+j]}
-            focus={(3*i)+j === focus ? true : false}
+            key={item}
+            onClick={(a, b) => this.handleClick(a, b, item)}
+            step={localSteps[item]}
+            focus={item === focus ? true : false}
             turn={this.state.xIsNext}
             start={this.state.stepNumber === 0 ? true : false}
           />
@@ -80,7 +81,7 @@ class Global extends React.Component {
   render() {
       const history = this.state.history;
       const stepNumber = this.state.stepNumber;
-      const winInfo = calculateWinner(this.state.globalBoard);
+      const winInfo = helpers.calculateWinner(this.state.globalBoard);
 
       const moves = (
           <div className="game-history">
