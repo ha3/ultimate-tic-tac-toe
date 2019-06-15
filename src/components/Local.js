@@ -1,6 +1,6 @@
 import React from 'react';
 import Board from './Board';
-import calculateWinner from '../helpers.js'
+import helpers from '../helpers.js';
 
 class Local extends React.Component {
   constructor(props) {
@@ -12,21 +12,25 @@ class Local extends React.Component {
     };
   }
 
-  handleClick(i) {
+  setMove(i) {
     const history = this.state.history.slice(0, this.props.step + 1);
     const current = history[history.length - 1];
     const squares = current.squares.slice();
     const move = this.props.turn ? 'X' : 'O';
+    let square;
 
-    if(calculateWinner(squares).winner || squares[i] || (!this.props.focus && !this.props.start)) {
-      return;
+    if(move === 'X') {
+      if(squares[i] || (!this.props.focus && !this.props.start)) {
+        return;
+      }
+      square = i;
     }
 
-    if(this.props.focus && move === 'O') {
-      console.log(squares);
+    else {
+      square = helpers.findBestMove(squares);
     }
 
-    squares[i] = move;
+    squares[square] = move;
 
     this.setState({
       history: history.concat([{
@@ -34,19 +38,26 @@ class Local extends React.Component {
       }]),
     });
 
-    this.props.onClick(i, calculateWinner(squares).winner);
+    this.props.onClick(square, helpers.calculateWinner(squares).winner);
+  }
+
+  // When it is O's turn, set move on the proper(focused) board.
+  componentDidUpdate(prevProps) {
+    if (this.props.focus && !this.props.turn) {
+      this.setMove();
+    }
   }
 
   render() {
     const history = this.state.history;
     const stepNumber = this.props.step;
     const current = history[stepNumber];
-    const winInfo = calculateWinner(current.squares);
+    const winInfo = helpers.calculateWinner(current.squares);
 
     return (
       <Board
         squares={current.squares}
-        onClick={(i) => this.handleClick(i)}
+        onClick={(i) => this.setMove(i)}
         winLine={winInfo.line}
         focus={this.props.focus}
       />
