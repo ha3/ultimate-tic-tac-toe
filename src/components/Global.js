@@ -13,7 +13,6 @@ class Global extends React.Component {
         globalBoard: Array(9).fill(null),
         focus: null,
       }],
-
       stepNumber: 0,
       xIsNext: true,
     }
