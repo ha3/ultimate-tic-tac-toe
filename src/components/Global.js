@@ -23,15 +23,21 @@ class Global extends React.Component {
     const current = history[history.length - 1];
     const localSteps = current.localSteps.slice();
     const globalBoard = current.globalBoard.slice();
+    let focus = null;
 
     localSteps[localBoard] += 1;
     globalBoard[localBoard] = localStatus;
+
+    // If all squares are full in a local board, then next player can select any board they wish.
+    if(localSteps[localCoordinate] !== 9) {
+      focus = localCoordinate
+    }
 
     this.setState({
       history: history.concat([{
         localSteps: localSteps,
         globalBoard: globalBoard,
-        focus: localCoordinate,
+        focus: focus,
       }]),
       stepNumber: history.length,
       xIsNext: !this.state.xIsNext,
@@ -44,7 +50,7 @@ class Global extends React.Component {
     const current = history[stepNumber];
     const localSteps = current.localSteps;
     const focus = current.focus;
-
+    
     let parent = [];
 
     for(let i = 0; i < 3; i++) {
@@ -59,7 +65,7 @@ class Global extends React.Component {
             step={localSteps[item]}
             focus={item === focus ? true : false}
             turn={this.state.xIsNext}
-            start={this.state.stepNumber === 0 ? true : false}
+            globalClick={focus === null ? true : false}
           />
         );
       }

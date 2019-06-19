@@ -22,7 +22,7 @@ class Local extends React.Component {
     let square;
 
     if(move === 'X') {
-      if(squares[i] || (!this.props.focus && !this.props.start)) {
+      if(squares[i] || (!this.props.focus && !this.props.globalClick)) {
         return;
       }
       square = i;
@@ -51,7 +51,7 @@ class Local extends React.Component {
 
   // When it is O's turn, set move on the proper(focused) board.
   componentDidUpdate(prevProps) {
-    if (this.props.focus && !this.props.turn) {
+    if ((this.props.focus || this.props.globalClick) && !this.props.turn) {
       this.setMove();
     }
   }
