@@ -1,5 +1,5 @@
 import React from 'react';
-import Board from './Board';
+import Square from './Square';
 
 class Local extends React.Component {
   setMove(i) {
@@ -12,16 +12,36 @@ class Local extends React.Component {
     this.props.onClick(i);
   }
 
+  renderSquares() {
+    let parent = [];
+    const winLine = this.props.winLine;
+
+    for(let i = 0; i <= 6; i += 3) {
+      let children = [];
+
+      for(let j = 0; j < 3; j++) {
+        children.push(
+          <Square
+            key={i+j}
+            value={this.props.squares[i+j]}
+            onClick={() => this.setMove(i+j)}
+            highlight={winLine && winLine.includes(i+j)}
+          />
+        );
+      }
+
+      parent.push(<div className="board-row" key={i}>{children}</div>);
+    }
+    return parent
+  }
+
   render() {
-    const squares = this.props.squares;
+    const className = 'left' + (this.props.focus ? ' board-focus' : '');
 
     return (
-      <Board
-        squares={squares}
-        onClick={(i) => this.setMove(i)}
-        winLine={this.props.winLine}
-        focus={this.props.focus}
-      />
+      <div className={className}>
+        {this.renderSquares()}
+      </div>
     );
   }
 }
