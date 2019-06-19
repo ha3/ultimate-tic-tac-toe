@@ -9,7 +9,9 @@ class Global extends React.Component {
     super(props);
     this.state = {
       history: [{
-        localSteps: Array(9).fill(0),
+        allBoards: Array(81).fill(null),
+        localMoveCount: Array(9).fill(0),
+        localWinLines: Array(9).fill(null),
         globalBoard: Array(9).fill(null),
         focus: null,
       }],
@@ -18,24 +20,38 @@ class Global extends React.Component {
     }
   }
 
-  handleClick(localCoordinate, localStatus, localBoard) {
-    const history = this.state.history.slice(0, this.state.stepNumber + 1);
+  handleClick(localCoordinate, localBoard) {
+    const stepNumber = this.state.stepNumber;
+    const history = this.state.history.slice(0, stepNumber + 1);
     const current = history[history.length - 1];
-    const localSteps = current.localSteps.slice();
+
+    const allBoards = current.allBoards.slice();
+    const localMoveCount = current.localMoveCount.slice();
+    const localWinLines = current.localWinLines.slice();
     const globalBoard = current.globalBoard.slice();
+
+    const move = this.state.xIsNext ? 'X' : 'O';
     let focus = null;
 
-    localSteps[localBoard] += 1;
-    globalBoard[localBoard] = localStatus;
+    allBoards[localBoard * 9 + localCoordinate] = move;
+    localMoveCount[localBoard] += 1;
 
     // If all squares are full in a local board, then next player can select any board they wish.
-    if(localSteps[localCoordinate] !== 9) {
-      focus = localCoordinate
+    if(localMoveCount[localBoard] !== 9) {
+      focus = localCoordinate;
+    }
+
+    if(globalBoard[localBoard] !== 'X' && globalBoard[localBoard] !== 'O' && globalBoard[localBoard] !== '-') {
+      const board =  allBoards.slice(localBoard * 9, localBoard * 9 + 9);
+      globalBoard[localBoard] = helpers.calculateWinner(board).winner;
+      localWinLines[localBoard] = helpers.calculateWinner(board).line;
     }
 
     this.setState({
       history: history.concat([{
-        localSteps: localSteps,
+        allBoards: allBoards,
+        localMoveCount: localMoveCount,
+        localWinLines: localWinLines,
         globalBoard: globalBoard,
         focus: focus,
       }]),
@@ -48,23 +64,26 @@ class Global extends React.Component {
     const stepNumber = this.state.stepNumber;
     const history = this.state.history;
     const current = history[stepNumber];
-    const localSteps = current.localSteps;
+
+    const allBoards = current.allBoards;
+    const localWinLines = current.localWinLines;
     const focus = current.focus;
-    
+
     let parent = [];
 
     for(let i = 0; i < 3; i++) {
       let children = [];
 
       for(let j = 0; j < 3; j++) {
-        let item = (3*i) + j;
+        let item = (3 * i) + j;
+
         children.push(
           <Local
             key={item}
-            onClick={(a, b) => this.handleClick(a, b, item)}
-            step={localSteps[item]}
+            squares={allBoards.slice(item * 9, item * 9 + 9)}
+            onClick={(a) => this.handleClick(a, item)}
             focus={item === focus ? true : false}
-            turn={this.state.xIsNext}
+            winLine={localWinLines[item]}
             globalClick={focus === null ? true : false}
           />
         );
@@ -81,6 +100,20 @@ class Global extends React.Component {
         stepNumber: step,
         xIsNext: true,
       });
+    }
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if(!this.state.xIsNext) {
+      const history = this.state.history;
+      const current = history[history.length - 1];
+
+      const focus = current.focus;
+      const allBoards = current.allBoards.slice(focus * 9, focus * 9 + 9);
+
+      const bestMove = helpers.findBestMove(allBoards);
+
+      this.handleClick(bestMove, focus);
     }
   }
 
