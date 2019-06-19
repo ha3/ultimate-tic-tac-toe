@@ -8,8 +8,8 @@ class Local extends React.Component {
     this.state = {
       history: [{
         squares: Array(9).fill(null),
+        winInfo: {},
       }],
-      winInfo: [],
     };
   }
 
@@ -17,8 +17,9 @@ class Local extends React.Component {
     const history = this.state.history.slice(0, this.props.step + 1);
     const current = history[history.length - 1];
     const squares = current.squares.slice();
+    const winInfo = Object.assign({}, current.winInfo);
     const move = this.props.turn ? 'X' : 'O';
-    let square, winInfo;
+    let square;
 
     if(move === 'X') {
       if(squares[i] || (!this.props.focus && !this.props.start)) {
@@ -33,21 +34,16 @@ class Local extends React.Component {
 
     squares[square] = move;
 
-
-    if(this.state.winInfo.winner !== 'X' && this.state.winInfo.winner !== 'O' &&
-    this.state.winInfo.winner !== '-') {
-      winInfo = helpers.calculateWinner(squares);
-    }
-
-    else {
-      winInfo = this.state.winInfo;
+    if(winInfo.winner !== 'X' && winInfo.winner !== 'O' && winInfo.winner !== '-') {
+      winInfo.winner = helpers.calculateWinner(squares).winner;
+      winInfo.line = helpers.calculateWinner(squares).line;
     }
 
     this.setState({
       history: history.concat([{
         squares: squares,
+        winInfo: winInfo,
       }]),
-      winInfo: winInfo,
     });
 
     this.props.onClick(square, winInfo.winner);
@@ -69,7 +65,7 @@ class Local extends React.Component {
       <Board
         squares={current.squares}
         onClick={(i) => this.setMove(i)}
-        winLine={this.state.winInfo.line}
+        winLine={current.winInfo.line}
         focus={this.props.focus}
       />
     );
