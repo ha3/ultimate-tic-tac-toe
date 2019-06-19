@@ -9,6 +9,7 @@ class Local extends React.Component {
       history: [{
         squares: Array(9).fill(null),
       }],
+      winInfo: [],
     };
   }
 
@@ -17,7 +18,7 @@ class Local extends React.Component {
     const current = history[history.length - 1];
     const squares = current.squares.slice();
     const move = this.props.turn ? 'X' : 'O';
-    let square;
+    let square, winInfo;
 
     if(move === 'X') {
       if(squares[i] || (!this.props.focus && !this.props.start)) {
@@ -32,13 +33,24 @@ class Local extends React.Component {
 
     squares[square] = move;
 
+
+    if(this.state.winInfo.winner !== 'X' && this.state.winInfo.winner !== 'O' &&
+    this.state.winInfo.winner !== '-') {
+      winInfo = helpers.calculateWinner(squares);
+    }
+
+    else {
+      winInfo = this.state.winInfo;
+    }
+
     this.setState({
       history: history.concat([{
         squares: squares,
       }]),
+      winInfo: winInfo,
     });
 
-    this.props.onClick(square, helpers.calculateWinner(squares).winner);
+    this.props.onClick(square, winInfo.winner);
   }
 
   // When it is O's turn, set move on the proper(focused) board.
@@ -52,13 +64,12 @@ class Local extends React.Component {
     const history = this.state.history;
     const stepNumber = this.props.step;
     const current = history[stepNumber];
-    const winInfo = helpers.calculateWinner(current.squares);
 
     return (
       <Board
         squares={current.squares}
         onClick={(i) => this.setMove(i)}
-        winLine={winInfo.line}
+        winLine={this.state.winInfo.line}
         focus={this.props.focus}
       />
     );
