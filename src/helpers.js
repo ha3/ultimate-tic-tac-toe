@@ -14,24 +14,17 @@ const helpers = {
     for(let i = 0; i < lines.length; i++) {
       const[a, b, c] = lines[i];
       if(squares[a] && squares[a] !== '-' && squares[a] === squares[b] && squares[a] === squares[c]) {
-        return {
-          winner: squares[a],
-          line: lines[i],
-        };
+        return squares[a];
       }
     }
 
     for(let i = 0; i < squares.length; i++) {
       if(squares[i] === null) {
-        return {
-          winner: null
-        }
+        return null;
       }
     }
 
-    return {
-      winner: '-'
-    };
+    return '-';
   },
 
   findBestMove: function(squares) {

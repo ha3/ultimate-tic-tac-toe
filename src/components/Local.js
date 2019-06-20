@@ -5,7 +5,7 @@ class Local extends React.Component {
   setMove(i) {
     const squares = this.props.squares;
 
-    if(squares[i] || (!this.props.focus && !this.props.globalClick)) {
+    if(squares[i] || (!this.props.focus && !this.props.freeMove)) {
         return;
     }
 
@@ -14,18 +14,18 @@ class Local extends React.Component {
 
   renderSquares() {
     let parent = [];
-    const winLine = this.props.winLine;
 
-    for(let i = 0; i <= 6; i += 3) {
+    for(let i = 0; i < 3; i++) {
       let children = [];
 
       for(let j = 0; j < 3; j++) {
+        let item = (3 * i) + j;
+
         children.push(
           <Square
-            key={i+j}
-            value={this.props.squares[i+j]}
-            onClick={() => this.setMove(i+j)}
-            highlight={winLine && winLine.includes(i+j)}
+            key={item}
+            value={this.props.squares[item]}
+            onClick={() => this.setMove(item)}
           />
         );
       }

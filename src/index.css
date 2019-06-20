@@ -74,10 +74,6 @@ ol, ul {
   cursor: pointer;
 }
 
-.highlight {
-  background-color: #ddd;
-}
-
 .move-list-item-selected {
   font-weight: bold;
 }
