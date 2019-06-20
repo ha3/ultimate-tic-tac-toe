@@ -21,8 +21,7 @@ class Global extends React.Component {
   }
 
   handleClick(localCoordinate, localBoard) {
-    const stepNumber = this.state.stepNumber;
-    const history = this.state.history.slice(0, stepNumber + 1);
+    const history = this.state.history.slice(0, this.state.stepNumber + 1);
     const current = history[history.length - 1];
 
     const allBoards = current.allBoards.slice();
@@ -104,6 +103,11 @@ class Global extends React.Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
+    /**
+    When it is O's turn, pass the concerning board and focus parameters
+    to server and set the returning 'best move'.
+    */
+
     if(!this.state.xIsNext) {
       const history = this.state.history;
       const current = history[history.length - 1];
@@ -118,45 +122,46 @@ class Global extends React.Component {
   }
 
   render() {
-      const history = this.state.history;
-      const stepNumber = this.state.stepNumber;
-      const current = history[stepNumber];
-      const globalBoard = current.globalBoard;
-      const winInfo = helpers.calculateWinner(globalBoard);
+    const history = this.state.history;
+    const stepNumber = this.state.stepNumber;
+    const current = history[stepNumber];
+    const globalBoard = current.globalBoard;
+    const winInfo = helpers.calculateWinner(globalBoard);
 
-      const moves = (
-          <div className="game-history">
-            <FontAwesomeIcon
-              key="left"
-              icon={faChevronLeft}
-              pull="left"
-              size="lg"
-              onClick={() => this.jumpTo(stepNumber-2, history.length)}
-            />
-            <FontAwesomeIcon
-              key="right"
-              icon={faChevronRight}
-              pull="right"
-              size="lg"
-              onClick={() => this.jumpTo(stepNumber+2, history.length)}
-            />
-          </div>
-      );
+    const moves = (
+        <div className="game-history">
+          <FontAwesomeIcon
+            key="left"
+            icon={faChevronLeft}
+            pull="left"
+            size="lg"
+            onClick={() => this.jumpTo(stepNumber-2, history.length)}
+          />
+          <FontAwesomeIcon
+            key="right"
+            icon={faChevronRight}
+            pull="right"
+            size="lg"
+            onClick={() => this.jumpTo(stepNumber+2, history.length)}
+          />
+        </div>
+    );
 
-      let status;
+    let status;
 
-      if(winInfo.winner) {
-        if(winInfo.winner !== '-') {
-          status = 'Winner: ' + winInfo.winner;
-        }
-
-        else {
-          status = 'It is a draw!';
-        }
+    if(winInfo.winner) {
+      if(winInfo.winner !== '-') {
+        status = 'Winner: ' + winInfo.winner;
       }
+
       else {
-        status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
+        status = 'It is a draw!';
       }
+    }
+
+    else {
+      status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
+    }
 
     return (
       <div className="game">

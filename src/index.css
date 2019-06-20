@@ -23,8 +23,16 @@ ol, ul {
 
 .left {
   float: left;
-  border: 2px solid black;
+  border: 2px solid #666;
   background-color: #fff
+}
+
+.X {
+  color: #dc7d18;
+}
+
+.O {
+  color: #ff1b78;
 }
 
 .square {
