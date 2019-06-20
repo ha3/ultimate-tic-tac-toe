@@ -13,10 +13,6 @@ ol, ul {
   display: table;
 }
 
-.board-focus {
-  background-color: #b4e7ff !important;
-}
-
 .status {
   margin-bottom: 10px;
 }
@@ -24,7 +20,46 @@ ol, ul {
 .left {
   float: left;
   border: 2px solid #666;
-  background-color: #fff
+  position: relative;
+}
+
+.board-focus {
+  background-color: #b4e7ff;
+}
+
+.won-X {
+  background: rgba(200, 54, 54, 0.5) !important;
+}
+
+.won-O {
+  background: rgba(400, 54, 54, 0.5) !important;
+}
+
+.left:hover .won {
+  opacity: 0;
+}
+
+.board-focus .won {
+  display: none;
+}
+
+.won {
+  width: 99px;
+  height: 99px;
+  position: absolute;
+  font-size: 90px;
+  color: #f3f1f0;
+  text-align: center;
+  cursor: default;
+  opacity: 0.8;
+  z-index: 1;
+  overflow: hidden;
+  font-family: Arial, sans-serif;
+  -webkit-transition: opacity .25s ease-in-out;
+  -moz-transition: opacity .25s ease-in-out;
+  -ms-transition: opacity .25s ease-in-out;
+  -o-transition: opacity .25s ease-in-out;
+  transition: opacity .25s ease-in-out;
 }
 
 .X {
@@ -72,8 +107,4 @@ ol, ul {
 .game-history {
   margin-top: 10px;
   cursor: pointer;
-}
-
-.move-list-item-selected {
-  font-weight: bold;
 }

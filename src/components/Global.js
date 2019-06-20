@@ -33,14 +33,14 @@ class Global extends React.Component {
     allBoards[localBoard * 9 + localCoordinate] = move;
     localMoveCount[localBoard] += 1;
 
-    // If all squares are full in a local board, then next player can select any board they wish.
-    if(localMoveCount[localBoard] !== 9) {
-      focus = localCoordinate;
-    }
-
     if(globalBoard[localBoard] !== 'X' && globalBoard[localBoard] !== 'O' && globalBoard[localBoard] !== '-') {
       const board =  allBoards.slice(localBoard * 9, localBoard * 9 + 9);
       globalBoard[localBoard] = helpers.calculateWinner(board);
+    }
+
+    // If all squares are full in a local board, then next player can select any board they wish.
+    if(!helpers.calculateWinner(globalBoard) & localMoveCount[localBoard] !== 9) {
+      focus = localCoordinate;
     }
 
     this.setState({
@@ -61,8 +61,10 @@ class Global extends React.Component {
     const current = history[stepNumber];
 
     const allBoards = current.allBoards;
+    const globalBoard = current.globalBoard;
     const focus = current.focus;
 
+    const globalWin = helpers.calculateWinner(globalBoard);
     let parent = [];
 
     for(let i = 0; i < 3; i++) {
@@ -77,7 +79,8 @@ class Global extends React.Component {
             squares={allBoards.slice(item * 9, item * 9 + 9)}
             onClick={(a) => this.handleClick(a, item)}
             focus={item === focus ? true : false}
-            freeMove={focus === null ? true : false}
+            freeMove={(!globalWin && focus === null) ? true : false}
+            win={globalBoard[item]}
           />
         );
       }
@@ -120,7 +123,7 @@ class Global extends React.Component {
     const stepNumber = this.state.stepNumber;
     const current = history[stepNumber];
     const globalBoard = current.globalBoard;
-    const winInfo = helpers.calculateWinner(globalBoard);
+    const globalWin = helpers.calculateWinner(globalBoard);
 
     const moves = (
         <div className="game-history">
@@ -143,9 +146,9 @@ class Global extends React.Component {
 
     let status;
 
-    if(winInfo) {
-      if(winInfo !== '-') {
-        status = 'Winner: ' + winInfo;
+    if(globalWin) {
+      if(globalWin !== '-') {
+        status = 'Winner: ' + globalWin;
       }
 
       else {

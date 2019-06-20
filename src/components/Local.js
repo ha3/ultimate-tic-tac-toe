@@ -13,6 +13,7 @@ class Local extends React.Component {
   }
 
   renderSquares() {
+    const won = this.props.win && !this.props.focus ? ('won-' + this.props.win) : false;
     let parent = [];
 
     for(let i = 0; i < 3; i++) {
@@ -26,6 +27,7 @@ class Local extends React.Component {
             key={item}
             value={this.props.squares[item]}
             onClick={() => this.setMove(item)}
+            won={won}
           />
         );
       }
@@ -36,10 +38,21 @@ class Local extends React.Component {
   }
 
   render() {
-    const className = 'left' + (this.props.focus ? ' board-focus' : '');
+    const win = this.props.win;
+    let className = 'left ' + (this.props.focus ? 'board-focus ' : '');
+    let wonParent = '';
+
+    if(win !== null) {
+      wonParent = (
+        <div className="won">
+          {win}
+        </div>
+      );
+    }
 
     return (
       <div className={className}>
+        {wonParent}
         {this.renderSquares()}
       </div>
     );
