@@ -13,6 +13,7 @@ class Global extends React.Component {
         localMoveCount: Array(9).fill(0),
         globalBoard: Array(9).fill(null),
         focus: null,
+        winner: null,
       }],
       stepNumber: 0,
       xIsNext: true,
@@ -26,6 +27,7 @@ class Global extends React.Component {
         localMoveCount: Array(9).fill(0),
         globalBoard: Array(9).fill(null),
         focus: null,
+        winner: null,
       }],
       stepNumber: 0,
       xIsNext: true,
@@ -41,19 +43,23 @@ class Global extends React.Component {
     });
     const localMoveCount = current.localMoveCount.slice();
     const globalBoard = current.globalBoard.slice();
-
     const move = this.state.xIsNext ? 'X' : 'O';
+
     let focus = null;
+    let winner = null;
 
     allBoards[board][coordinate] = move;
     localMoveCount[board] += 1;
 
+    // If status of a local board is null, then call calculateWinner function for that board
     if(globalBoard[board] !== 'X' && globalBoard[board] !== 'O' && globalBoard[board] !== '-') {
       globalBoard[board] = helpers.calculateWinner(allBoards[board]);
     }
 
+    winner = helpers.calculateWinner(globalBoard);
+
     // If all squares are full in a local board, then next player can select any board they wish.
-    if(!helpers.calculateWinner(globalBoard) & localMoveCount[coordinate] !== 9) {
+    if(!winner & localMoveCount[coordinate] !== 9) {
       focus = coordinate;
     }
 
@@ -63,6 +69,7 @@ class Global extends React.Component {
         localMoveCount: localMoveCount,
         globalBoard: globalBoard,
         focus: focus,
+        winner: winner,
       }]),
       stepNumber: history.length,
       xIsNext: !this.state.xIsNext,
@@ -77,9 +84,9 @@ class Global extends React.Component {
     const allBoards = current.allBoards;
     const globalBoard = current.globalBoard;
     const focus = current.focus;
+    const winner = current.winner;
 
-    const globalWin = helpers.calculateWinner(globalBoard);
-    const freeMove = (!globalWin && focus === null) ? true : false;
+    const freeMove = (!winner && focus === null) ? true : false;
 
     let parent = [];
 
@@ -120,7 +127,12 @@ class Global extends React.Component {
     to server and set the returning 'best move'.
     */
 
-    if(!this.state.xIsNext) {
+    const history = this.state.history;
+    const stepNumber = this.state.stepNumber;
+    const current = history[stepNumber];
+    const winner = current.winner;
+
+    if(!winner & !this.state.xIsNext) {
       const history = this.state.history;
       const current = history[history.length - 1];
 
@@ -137,8 +149,7 @@ class Global extends React.Component {
     const history = this.state.history;
     const stepNumber = this.state.stepNumber;
     const current = history[stepNumber];
-    const globalBoard = current.globalBoard;
-    const globalWin = helpers.calculateWinner(globalBoard);
+    const winner = current.winner;
 
     const moves = (
         <div className="game-history">
@@ -161,9 +172,9 @@ class Global extends React.Component {
 
     let status;
 
-    if(globalWin) {
-      if(globalWin !== '-') {
-        status = 'Winner: ' + globalWin;
+    if(winner) {
+      if(winner !== '-') {
+        status = 'Winner: ' + winner;
       }
 
       else {
