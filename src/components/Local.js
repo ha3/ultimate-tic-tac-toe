@@ -2,10 +2,10 @@ import React from 'react';
 import Square from './Square';
 
 class Local extends React.Component {
-  setMove(i) {
+  handleClick(i) {
     const squares = this.props.squares;
 
-    if(squares[i] || (!this.props.focus && !this.props.freeMove)) {
+    if(squares[i] || (!this.props.focus)) {
         return;
     }
 
@@ -26,7 +26,7 @@ class Local extends React.Component {
           <Square
             key={item}
             value={this.props.squares[item]}
-            onClick={() => this.setMove(item)}
+            onClick={() => this.handleClick(item)}
             won={won}
           />
         );

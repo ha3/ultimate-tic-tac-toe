@@ -19,7 +19,20 @@ class Global extends React.Component {
     }
   }
 
-  handleClick(localCoordinate, localBoard) {
+  handleReset() {
+    this.setState({
+      history: [{
+        allBoards: Array(81).fill(null),
+        localMoveCount: Array(9).fill(0),
+        globalBoard: Array(9).fill(null),
+        focus: null,
+      }],
+      stepNumber: 0,
+      xIsNext: true,
+    });
+  }
+
+  handleClick(coordinate, board) {
     const history = this.state.history.slice(0, this.state.stepNumber + 1);
     const current = history[history.length - 1];
 
@@ -30,17 +43,16 @@ class Global extends React.Component {
     const move = this.state.xIsNext ? 'X' : 'O';
     let focus = null;
 
-    allBoards[localBoard * 9 + localCoordinate] = move;
-    localMoveCount[localBoard] += 1;
+    allBoards[board * 9 + coordinate] = move;
+    localMoveCount[board] += 1;
 
-    if(globalBoard[localBoard] !== 'X' && globalBoard[localBoard] !== 'O' && globalBoard[localBoard] !== '-') {
-      const board =  allBoards.slice(localBoard * 9, localBoard * 9 + 9);
-      globalBoard[localBoard] = helpers.calculateWinner(board);
+    if(globalBoard[board] !== 'X' && globalBoard[board] !== 'O' && globalBoard[board] !== '-') {
+      globalBoard[board] = helpers.calculateWinner(allBoards.slice(board * 9, board * 9 + 9));
     }
 
     // If all squares are full in a local board, then next player can select any board they wish.
-    if(!helpers.calculateWinner(globalBoard) & localMoveCount[localBoard] !== 9) {
-      focus = localCoordinate;
+    if(!helpers.calculateWinner(globalBoard) & localMoveCount[coordinate] !== 9) {
+      focus = coordinate;
     }
 
     this.setState({
@@ -65,6 +77,8 @@ class Global extends React.Component {
     const focus = current.focus;
 
     const globalWin = helpers.calculateWinner(globalBoard);
+    const freeMove = (!globalWin && focus === null) ? true : false;
+
     let parent = [];
 
     for(let i = 0; i < 3; i++) {
@@ -78,8 +92,7 @@ class Global extends React.Component {
             key={item}
             squares={allBoards.slice(item * 9, item * 9 + 9)}
             onClick={(a) => this.handleClick(a, item)}
-            focus={item === focus ? true : false}
-            freeMove={(!globalWin && focus === null) ? true : false}
+            focus={(item === focus || (!globalBoard[item] && freeMove)) ? true : false}
             win={globalBoard[item]}
           />
         );
@@ -101,7 +114,7 @@ class Global extends React.Component {
 
   componentDidUpdate(prevProps, prevState) {
     /**
-    When it is O's turn, pass the concerning board and focus parameters
+    When it is O's turn, pass the related board and focus parameters
     to server and set the returning 'best move'.
     */
 
@@ -168,6 +181,7 @@ class Global extends React.Component {
         </div>
         <div className="game-info">
           <div className="status">{status}</div>
+          <button onClick={() => this.handleReset()}>New Game</button>
         </div>
       </div>
     );

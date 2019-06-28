@@ -39,6 +39,10 @@ ol, ul {
   opacity: 0;
 }
 
+.left:hover .won-X, .left:hover .won-O {
+  background: inherit !important;
+}
+
 .board-focus .won {
   display: none;
 }
@@ -87,10 +91,6 @@ ol, ul {
 
 .square:focus {
   outline: none;
-}
-
-.kbd-navigation .square:focus {
-  background: #ddd;
 }
 
 .game {
