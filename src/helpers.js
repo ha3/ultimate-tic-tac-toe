@@ -27,9 +27,13 @@ const helpers = {
     return '-';
   },
 
-  findBestMove: function(squares) {
-    for(let i = 0; i < squares.length; i++) {
-      if(squares[i] === null) {
+  findBestMove: function(squares, focus) {
+    if(focus === null) {
+      focus = 0;
+    }
+
+    for(let i = 0; i < squares[focus].length; i++) {
+      if(squares[focus][i] === null) {
         return i;
       }
     }

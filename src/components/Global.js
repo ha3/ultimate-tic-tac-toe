@@ -9,7 +9,7 @@ class Global extends React.Component {
     super(props);
     this.state = {
       history: [{
-        allBoards: Array(81).fill(null),
+        allBoards: Array(9).fill(Array(9).fill(null)),
         localMoveCount: Array(9).fill(0),
         globalBoard: Array(9).fill(null),
         focus: null,
@@ -22,7 +22,7 @@ class Global extends React.Component {
   handleReset() {
     this.setState({
       history: [{
-        allBoards: Array(81).fill(null),
+        allBoards: Array(9).fill(null).map(x=> Array(9).fill(null)),
         localMoveCount: Array(9).fill(0),
         globalBoard: Array(9).fill(null),
         focus: null,
@@ -36,25 +36,27 @@ class Global extends React.Component {
     const history = this.state.history.slice(0, this.state.stepNumber + 1);
     const current = history[history.length - 1];
 
-    const allBoards = current.allBoards.slice();
+    const allBoards = current.allBoards.map(function(arr) {
+      return arr.slice();
+    });
     const localMoveCount = current.localMoveCount.slice();
     const globalBoard = current.globalBoard.slice();
 
     const move = this.state.xIsNext ? 'X' : 'O';
     let focus = null;
 
-    allBoards[board * 9 + coordinate] = move;
+    allBoards[board][coordinate] = move;
     localMoveCount[board] += 1;
 
     if(globalBoard[board] !== 'X' && globalBoard[board] !== 'O' && globalBoard[board] !== '-') {
-      globalBoard[board] = helpers.calculateWinner(allBoards.slice(board * 9, board * 9 + 9));
+      globalBoard[board] = helpers.calculateWinner(allBoards[board]);
     }
 
     // If all squares are full in a local board, then next player can select any board they wish.
     if(!helpers.calculateWinner(globalBoard) & localMoveCount[coordinate] !== 9) {
       focus = coordinate;
     }
-
+    
     this.setState({
       history: history.concat([{
         allBoards: allBoards,
@@ -90,7 +92,7 @@ class Global extends React.Component {
         children.push(
           <Local
             key={item}
-            squares={allBoards.slice(item * 9, item * 9 + 9)}
+            squares={allBoards[item]}
             onClick={(a) => this.handleClick(a, item)}
             focus={(item === focus || (!globalBoard[item] && freeMove)) ? true : false}
             win={globalBoard[item]}
@@ -123,9 +125,9 @@ class Global extends React.Component {
       const current = history[history.length - 1];
 
       const focus = current.focus;
-      const allBoards = current.allBoards.slice(focus * 9, focus * 9 + 9);
+      const allBoards = current.allBoards;
 
-      const bestMove = helpers.findBestMove(allBoards);
+      const bestMove = helpers.findBestMove(allBoards, focus);
 
       this.handleClick(bestMove, focus);
     }
