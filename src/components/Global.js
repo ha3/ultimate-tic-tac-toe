@@ -9,7 +9,7 @@ class Global extends React.Component {
     super(props);
     this.state = {
       history: [{
-        allBoards: Array(9).fill(Array(9).fill(null)),
+        allBoards: Array(9).fill(null).map(x=> Array(9).fill(null)),
         localMoveCount: Array(9).fill(0),
         globalBoard: Array(9).fill(null),
         focus: null,
@@ -32,7 +32,7 @@ class Global extends React.Component {
     });
   }
 
-  handleClick(coordinate, board) {
+  setMove(coordinate, board) {
     const history = this.state.history.slice(0, this.state.stepNumber + 1);
     const current = history[history.length - 1];
 
@@ -56,7 +56,7 @@ class Global extends React.Component {
     if(!helpers.calculateWinner(globalBoard) & localMoveCount[coordinate] !== 9) {
       focus = coordinate;
     }
-    
+
     this.setState({
       history: history.concat([{
         allBoards: allBoards,
@@ -93,7 +93,7 @@ class Global extends React.Component {
           <Local
             key={item}
             squares={allBoards[item]}
-            onClick={(a) => this.handleClick(a, item)}
+            onClick={(a) => this.setMove(a, item)}
             focus={(item === focus || (!globalBoard[item] && freeMove)) ? true : false}
             win={globalBoard[item]}
           />
@@ -129,7 +129,7 @@ class Global extends React.Component {
 
       const bestMove = helpers.findBestMove(allBoards, focus);
 
-      this.handleClick(bestMove, focus);
+      this.setMove(bestMove, focus);
     }
   }
 
