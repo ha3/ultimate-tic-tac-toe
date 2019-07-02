@@ -1,5 +1,5 @@
 const config = {
-    entry:  __dirname + '/src/index.js',
+    entry:  __dirname + '/js/index.js',
     output: {
         path: __dirname + '/static',
         filename: 'bundle.js',
@@ -15,10 +15,6 @@ const config = {
           use: {
             loader: "babel-loader"
           }
-        },
-        {
-          test: /\.css$/i,
-          use: ['css-loader'],
         }
       ]
     },

@@ -136,8 +136,24 @@ class Global extends React.Component {
       const history = this.state.history;
       const current = history[history.length - 1];
 
-      const focus = current.focus;
       const allBoards = current.allBoards;
+      const focus = current.focus;
+
+      const data = {allBoards: allBoards, focus: focus};
+
+      fetch('http://localhost:5000/response', {
+        method: 'POST',
+        body: JSON.stringify(data),
+        headers: {
+          'Accept': 'application/json, text/plain, */*',
+          'Content-Type': 'application/json',
+        }
+      })
+        .then(r => r.json())
+        .then(r => {
+          console.log(r)
+        })
+        .catch(err => console.log(err));
 
       const bestMove = helpers.findBestMove(allBoards, focus);
 
@@ -171,7 +187,7 @@ class Global extends React.Component {
     );
 
     let status;
-    
+
     if(winner) {
       if(winner !== '-') {
         status = 'Winner: ' + winner;
