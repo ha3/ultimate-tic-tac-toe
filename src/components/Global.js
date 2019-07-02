@@ -171,7 +171,7 @@ class Global extends React.Component {
     );
 
     let status;
-
+    
     if(winner) {
       if(winner !== '-') {
         status = 'Winner: ' + winner;
