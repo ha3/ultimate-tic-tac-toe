@@ -1,7 +1,7 @@
 const config = {
     entry:  __dirname + '/src/index.js',
     output: {
-        path: __dirname + '/dist',
+        path: __dirname + '/static',
         filename: 'bundle.js',
     },
     resolve: {
