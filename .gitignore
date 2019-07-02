@@ -24,3 +24,4 @@ yarn-error.log*
 
 venv
 static/bundle.js
+__pycache__
