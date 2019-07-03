@@ -1,6 +1,8 @@
 from flask import Flask, render_template, jsonify, request
 from flask_cors import CORS, cross_origin
 
+from ai import *
+
 app = Flask(__name__)
 CORS(app)
 
@@ -12,10 +14,12 @@ def hello_world():
 def response():
     content = request.get_json()
 
-    boards = content['boards']
+    allBoards = content['allBoards']
     focus = content['focus']
 
-    jsonResponse = {'board': 1, 'coordinate': focus}
+    board, coordinate = find_best_move(allBoards, focus)
+
+    jsonResponse = {'board': board, 'coordinate': coordinate}
     return jsonify(jsonResponse)
 
 if __name__ == '__main__':

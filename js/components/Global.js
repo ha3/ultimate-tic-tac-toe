@@ -149,15 +149,11 @@ class Global extends React.Component {
           'Content-Type': 'application/json',
         }
       })
-        .then(r => r.json())
-        .then(r => {
-          console.log(r)
+        .then(res => res.json())
+        .then(res => {
+          this.setMove(res.coordinate, res.board);
         })
         .catch(err => console.log(err));
-
-      const bestMove = helpers.findBestMove(allBoards, focus);
-
-      this.setMove(bestMove, focus);
     }
   }
 
