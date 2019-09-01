@@ -58,7 +58,7 @@ class Global extends React.Component {
 
     winner = helpers.calculateWinner(globalBoard);
 
-    // If all squares are full in a local board, then next player can select any board they wish.
+    // If all squares are full in a board, then next player can select any board they wish.
     if(!winner & localMoveCount[coordinate] !== 9) {
       focus = coordinate;
     }
@@ -138,8 +138,11 @@ class Global extends React.Component {
 
       const allBoards = current.allBoards;
       const focus = current.focus;
+      const globalBoard = current.globalBoard;
+      const localMoveCount = current.localMoveCount;
 
-      const data = {allBoards: allBoards, focus: focus};
+      const data = {allBoards: allBoards, focus: focus, move: stepNumber,
+                    globalBoard: globalBoard, localMoveCount: localMoveCount};
 
       fetch('http://localhost:5000/response', {
         method: 'POST',
@@ -151,7 +154,7 @@ class Global extends React.Component {
       })
         .then(res => res.json())
         .then(res => {
-          this.setMove(res.coordinate, res.board);
+          this.setMove(res.best_move, focus);
         })
         .catch(err => console.log(err));
     }
