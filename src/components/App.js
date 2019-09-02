@@ -1,5 +1,6 @@
 import React from 'react';
 import Global from './Global';
+import '../index.css';
 
 function App() {
   return (

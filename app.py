@@ -1,10 +1,12 @@
-from flask import Flask, render_template, jsonify, request
+import os
+
+from flask import Flask, render_template, jsonify, request, send_from_directory
 from flask_cors import CORS, cross_origin
 from math import inf
 
 from ai import Game
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='build/static', template_folder='build')
 CORS(app)
 
 def mask(position, player):
@@ -36,7 +38,8 @@ def response():
 
     for i in range(9):
         for j in range(9):
-            bit_all_boards[i] = bit_all_boards[i] | mask(j, allBoards[i][j])
+            if all_boards[i][j] == 'X' or all_boards[i][j] == 'O':
+                bit_all_boards[i] = bit_all_boards[i] | mask(j, all_boards[i][j])
 
         if global_board[i] in ['X', 'O', '-']:
             bit_ended_boards = bit_ended_boards | (1 << i)
@@ -50,10 +53,19 @@ def response():
 
     game = Game(all_boards=bit_all_boards, global_board=bit_global_board, ended_boards=bit_ended_boards,
                 full_boards=bit_full_boards, turn=-1, focus=focus, move=move+1)
-    best_move = game.alpha_beta((81-move_count), -inf, inf, focus)
+    best_move = game.alpha_beta((81-move), -inf, inf, focus)[0]
 
     jsonResponse = {'best_move': best_move}
+
     return jsonify(jsonResponse)
+
+@app.route('/favicon.ico')
+def favicon():
+    return send_from_directory(os.path.join(app.root_path, 'build'), 'favicon.ico')
+
+@app.route('/manifest.json')
+def manifest():
+    return send_from_directory(os.path.join(app.root_path, 'build'), 'manifest.json')
 
 if __name__ == '__main__':
     app.run(debug=True)
