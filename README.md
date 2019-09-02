@@ -40,13 +40,7 @@ pip install -r requirements.txt
 
 ### Front-end:
 
-If you don't have webpack, install it:
-
-```bash
-npm install -g webpack
-```
-
-Then install the Javascript dependencies.
+Install javascript dependencies.
 
 ```bash
 npm install
@@ -54,10 +48,10 @@ npm install
 
 ## Development
 
-React components are in ```js``` directory. While developing on the front-end run ```webpack --watch ``` to keep re-compiling your Javascript code. It will create a ``` static/bundle.js ``` file, which is the bundled version of your Javascript code.
+React components are in ```src``` directory. While developing on the front-end run ```npm run build ``` to compile your javascript code. It will create a ``` build ``` directory, which contains bundled version of your javascript and css codes.
 
 
-Back-end part consists of ``` app.py ``` and ``` ai.py ```. 
+Back-end part consists of ``` app.py ``` and ``` ai.py ```.
 
 
 ## Usage
